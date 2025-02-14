@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.1
+
+### Patch Changes
+
+- 1638df7: Add AggregateError to mapped errors
+
 ## 0.2.0
 
 ### Minor Changes

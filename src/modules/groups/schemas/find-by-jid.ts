@@ -1,17 +1,17 @@
 import type { z } from "zod";
 
 import {
-	GroupWithParticipantsResponseSchema,
-	GroupWithParticipantsResponseSchemaTransform,
+  GroupWithParticipantsResponseSchema,
+  GroupWithParticipantsResponseSchemaTransform,
 } from "./common";
 
 export const FindGroupByJidResponseSchema =
-	GroupWithParticipantsResponseSchema.transform(
-		GroupWithParticipantsResponseSchemaTransform,
-	);
+  GroupWithParticipantsResponseSchema.transform(
+    GroupWithParticipantsResponseSchemaTransform,
+  );
 
 export type FindGroupByJidResponse = z.infer<
-	typeof FindGroupByJidResponseSchema
+  typeof FindGroupByJidResponseSchema
 >;
 
 export { FindGroupByJidResponseSchema as ResponseSchema };

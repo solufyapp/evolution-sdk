@@ -1,9 +1,9 @@
-import { parsePhoneNumber } from "libphonenumber-js";
+import { parsePhoneNumberWithError } from "libphonenumber-js";
 
 /**
  * Get phone number from JID
  * @param jid - JID (remote JID)
  */
 export function phoneNumberFromJid(jid: string) {
-	return parsePhoneNumber(`+${jid.split("@")[0]}`).number;
+  return parsePhoneNumberWithError(`+${jid.split("@")[0]}`).number;
 }

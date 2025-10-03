@@ -12,7 +12,8 @@
     "enabled": true,
     "rules": {
       "recommended": true,
-      "style": { "useNodejsImportProtocol": "off" }
+      "style": { "useNodejsImportProtocol": "off" },
+      "nursery": { "noDeprecatedImports": "error" }
     }
   },
 

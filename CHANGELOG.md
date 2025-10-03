@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.2
+
+### Patch Changes
+
+- 9003f4a: Replace `{{greeting}}` with with time-based greeting in pt-BR at all messages and captions.
+
 ## 0.2.1
 
 ### Patch Changes

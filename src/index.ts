@@ -38,10 +38,9 @@ export class EvolutionClient {
 }
 
 export { EvolutionApiError } from "./api/errors";
-export { ChatId, GroupJid, Jid, MessageId } from "./types/tags";
-export { phoneNumberFromJid } from "./utils/phone-numer-from-jid";
-
 export type * from "./modules/chats/schemas";
 export type * from "./modules/groups/schemas";
 export type * from "./modules/messages/schemas";
+export { ChatId, GroupJid, Jid, MessageId } from "./types/tags";
+export { phoneNumberFromJid } from "./utils/phone-numer-from-jid";
 export type { ClientOptions };

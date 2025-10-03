@@ -3,7 +3,7 @@
 	"private": false,
 	"version": "0.2.1",
 	"description": "Unofficial SDK for the Evolution Whatsapp API v2",
-	"packageManager": "pnpm@10.9.0",
+	"packageManager": "pnpm@10.18.0",
 	"main": "lib/index.js",
 	"types": "lib/index.d.ts",
 	"module": "lib/index.mjs",
@@ -17,15 +17,15 @@
 		"node": ">=18.0.0"
 	},
 	"dependencies": {
-		"libphonenumber-js": "^1.12.7",
+		"libphonenumber-js": "^1.12.23",
 		"zod": "^3.24.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"@changesets/cli": "^2.29.2",
-		"@types/node": "^22.14.1",
-		"tsup": "^8.4.0",
-		"typescript": "^5.8.3"
+		"@changesets/cli": "^2.29.7",
+		"@types/node": "^24.6.2",
+		"tsup": "^8.5.0",
+		"typescript": "^5.9.3"
 	},
 	"keywords": [
 		"evolution",

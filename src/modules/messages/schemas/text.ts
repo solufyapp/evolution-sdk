@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 import { Jid, MessageId } from "@/types/tags";
+import { replaceWithGreeting } from "@/utils/greeting";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
@@ -9,7 +10,7 @@ export const TextMessageOptionsSchema = BaseMessageOptionsSchema.extend({
   /**
    * Message text content
    */
-  text: z.string(),
+  text: z.string().overwrite(replaceWithGreeting),
   /**
    * Whether link preview should be shown
    */

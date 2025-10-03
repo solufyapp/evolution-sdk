@@ -2,6 +2,7 @@ import * as z from "zod";
 
 import { mediaSchema } from "@/schemas/common";
 import { Jid, MessageId } from "@/types/tags";
+import { replaceWithGreeting } from "@/utils/greeting";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
@@ -14,7 +15,7 @@ export const ImageMessageOptionsSchema = BaseMessageOptionsSchema.extend({
   /**
    * Caption to send with image
    */
-  caption: z.string().optional(),
+  caption: z.string().optional().overwrite(replaceWithGreeting),
   /**
    * Image mimetype
    */

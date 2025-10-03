@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 import { Jid, MessageId } from "@/types/tags";
+import { replaceWithGreeting } from "@/utils/greeting";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
@@ -9,7 +10,7 @@ export const PollMessageOptionsSchema = BaseMessageOptionsSchema.extend({
   /**
    * Name of the poll
    */
-  name: z.string(),
+  name: z.string().overwrite(replaceWithGreeting),
   /**
    * Whether multiple options can be selected
    * @default false

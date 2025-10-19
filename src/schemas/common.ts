@@ -1,6 +1,6 @@
 import {
   isValidPhoneNumber,
-  parsePhoneNumberWithError,
+  parsePhoneNumberFromString,
 } from "libphonenumber-js";
 import * as z from "zod";
 
@@ -9,7 +9,9 @@ import type { GroupInviteCode, GroupJid, Jid } from "@/types/tags";
 export const PhoneNumberSchema = z
   .string()
   .refine((value) => isValidPhoneNumber(value), "Invalid phone number")
-  .overwrite((phoneNumber) => parsePhoneNumberWithError(phoneNumber).number);
+  .overwrite(
+    (phoneNumber) => parsePhoneNumberFromString(phoneNumber)?.number as string,
+  );
 
 export const JidSchema = z
   .string()

@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.3
+
+### Patch Changes
+
+- 403fbe6: Fix sending messages to groups
+
 ## 0.2.2
 
 ### Patch Changes

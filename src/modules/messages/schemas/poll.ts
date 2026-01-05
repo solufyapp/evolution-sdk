@@ -6,7 +6,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const PollMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Name of the poll
    */
@@ -22,31 +22,37 @@ export const PollMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   options: z.array(z.string()),
 });
 
-export const PollMessageBodySchema = z.pipe(
-  PollMessageOptionsSchema,
-  z.transform(({ multiple, options, ...data }) => ({
+export const Body = (options: PollMessageOptions) => {
+  const {
+    multiple,
+    options: pollOptions,
+    ...data
+  } = OptionsSchema.parse(options);
+  return {
     ...data,
-    selectableCount: multiple ? options.length : 1,
-    values: options,
-  })),
-);
+    selectableCount: multiple ? pollOptions.length : 1,
+    values: pollOptions,
+  };
+};
 
-export const PollMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      pollCreationMessageV3: z.object({
-        name: z.string(),
-        options: z.array(z.object({ optionName: z.string() })),
-        selectableOptionsCount: z.number(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    pollCreationMessageV3: z.object({
+      name: z.string(),
+      options: z.array(z.object({ optionName: z.string() })),
+      selectableOptionsCount: z.number(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -60,14 +66,8 @@ export const PollMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type PollMessageOptions = z.infer<typeof PollMessageOptionsSchema>;
-export type PollMessageResponse = z.infer<typeof PollMessageResponseSchema>;
-
-export {
-  PollMessageBodySchema as BodySchema,
-  PollMessageOptionsSchema as OptionsSchema,
-  PollMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type PollMessageOptions = z.infer<typeof OptionsSchema>;
+export type PollMessageResponse = ReturnType<typeof Response>;

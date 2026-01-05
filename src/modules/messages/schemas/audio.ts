@@ -6,7 +6,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const AudioMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Audio URL or file in base64
    */
@@ -17,37 +17,39 @@ export const AudioMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   mimetype: z.optional(z.string()),
 });
 
-export const AudioMessageBodySchema = z.pipe(
-  AudioMessageOptionsSchema,
-  z.transform(({ audio, ...data }) => ({
+export const Body = (options: AudioMessageOptions) => {
+  const { audio, ...data } = OptionsSchema.parse(options);
+  return {
     ...data,
     media: audio,
     mediatype: "audio",
-  })),
-);
+  };
+};
 
-export const AudioMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      audioMessage: z.object({
-        url: z.url(),
-        mimetype: z.optional(z.string()),
-        fileSha256: z.base64(),
-        fileLength: z.coerce.number(),
-        seconds: z.number(),
-        mediaKey: z.base64(),
-        fileEncSha256: z.base64(),
-        directPath: z.string(),
-        mediaKeyTimestamp: z.coerce.date(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    audioMessage: z.object({
+      url: z.url(),
+      mimetype: z.optional(z.string()),
+      fileSha256: z.base64(),
+      fileLength: z.coerce.number(),
+      seconds: z.number(),
+      mediaKey: z.base64(),
+      fileEncSha256: z.base64(),
+      directPath: z.string(),
+      mediaKeyTimestamp: z.coerce.date(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -65,14 +67,8 @@ export const AudioMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type AudioMessageOptions = z.infer<typeof AudioMessageOptionsSchema>;
-export type AudioMessageResponse = z.infer<typeof AudioMessageResponseSchema>;
-
-export {
-  AudioMessageBodySchema as BodySchema,
-  AudioMessageOptionsSchema as OptionsSchema,
-  AudioMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type AudioMessageOptions = z.infer<typeof OptionsSchema>;
+export type AudioMessageResponse = ReturnType<typeof Response>;

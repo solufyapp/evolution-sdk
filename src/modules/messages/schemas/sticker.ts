@@ -6,36 +6,40 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const StickerMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Image URL or file in base64
    */
   sticker: mediaSchema,
 });
 
-export const StickerMessageBodySchema = StickerMessageOptionsSchema;
+export const Body = (options: StickerMessageOptions) => {
+  return OptionsSchema.parse(options);
+};
 
-export const StickerMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      stickerMessage: z.object({
-        url: z.url(),
-        fileSha256: z.base64(),
-        fileEncSha256: z.base64(),
-        mediaKey: z.base64(),
-        mimetype: z.optional(z.string()),
-        directPath: z.string(),
-        fileLength: z.coerce.number(),
-        mediaKeyTimestamp: z.coerce.date(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    stickerMessage: z.object({
+      url: z.url(),
+      fileSha256: z.base64(),
+      fileEncSha256: z.base64(),
+      mediaKey: z.base64(),
+      mimetype: z.optional(z.string()),
+      directPath: z.string(),
+      fileLength: z.coerce.number(),
+      mediaKeyTimestamp: z.coerce.date(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -52,16 +56,8 @@ export const StickerMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type StickerMessageOptions = z.infer<typeof StickerMessageOptionsSchema>;
-export type StickerMessageResponse = z.infer<
-  typeof StickerMessageResponseSchema
->;
-
-export {
-  StickerMessageBodySchema as BodySchema,
-  StickerMessageOptionsSchema as OptionsSchema,
-  StickerMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type StickerMessageOptions = z.infer<typeof OptionsSchema>;
+export type StickerMessageResponse = ReturnType<typeof Response>;

@@ -5,7 +5,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const LocationMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Location name
    */
@@ -24,25 +24,29 @@ export const LocationMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   longitude: z.number(),
 });
 
-export const LocationMessageBodySchema = LocationMessageOptionsSchema;
+export const Body = (options: LocationMessageOptions) => {
+  return OptionsSchema.parse(options);
+};
 
-export const LocationMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      locationMessage: z.object({
-        degreesLatitude: z.number(),
-        degreesLongitude: z.number(),
-        name: z.string(),
-        address: z.string(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    locationMessage: z.object({
+      degreesLatitude: z.number(),
+      degreesLongitude: z.number(),
+      name: z.string(),
+      address: z.string(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -55,18 +59,8 @@ export const LocationMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type LocationMessageOptions = z.infer<
-  typeof LocationMessageOptionsSchema
->;
-export type LocationMessageResponse = z.infer<
-  typeof LocationMessageResponseSchema
->;
-
-export {
-  LocationMessageBodySchema as BodySchema,
-  LocationMessageOptionsSchema as OptionsSchema,
-  LocationMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type LocationMessageOptions = z.infer<typeof OptionsSchema>;
+export type LocationMessageResponse = ReturnType<typeof Response>;

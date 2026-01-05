@@ -7,7 +7,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const ContactMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Contact list
    */
@@ -37,9 +37,9 @@ export const ContactMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   ),
 });
 
-export const ContactMessageBodySchema = z.pipe(
-  ContactMessageOptionsSchema,
-  z.transform(({ contacts, ...data }) => ({
+export const Body = (options: ContactMessageOptions) => {
+  const { contacts, ...data } = OptionsSchema.parse(options);
+  return {
     ...data,
     contact: contacts.map((contact) => ({
       ...contact,
@@ -48,36 +48,38 @@ export const ContactMessageBodySchema = z.pipe(
       ).formatInternational(),
       wuid: contact.phoneNumber.replace(/\D/g, ""),
     })),
-  })),
-);
+  };
+};
 
-export const ContactMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.union([
-      z.object({
-        contactMessage: z.object({
-          displayName: z.string(),
-          vcard: z.string(),
-        }),
-      }),
-      z.object({
-        contactsArrayMessage: z.object({
-          contacts: z.array(
-            z.object({
-              displayName: z.string(),
-              vcard: z.string(),
-            }),
-          ),
-        }),
-      }),
-    ]),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.union([
+    z.object({
+      contactMessage: z.object({
+        displayName: z.string(),
+        vcard: z.string(),
+      }),
+    }),
+    z.object({
+      contactsArrayMessage: z.object({
+        contacts: z.array(
+          z.object({
+            displayName: z.string(),
+            vcard: z.string(),
+          }),
+        ),
+      }),
+    }),
+  ]),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -88,16 +90,8 @@ export const ContactMessageResponseSchema = z.pipe(
         : data.message.contactsArrayMessage.contacts,
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type ContactMessageOptions = z.infer<typeof ContactMessageOptionsSchema>;
-export type ContactMessageResponse = z.infer<
-  typeof ContactMessageResponseSchema
->;
-
-export {
-  ContactMessageBodySchema as BodySchema,
-  ContactMessageOptionsSchema as OptionsSchema,
-  ContactMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type ContactMessageOptions = z.infer<typeof OptionsSchema>;
+export type ContactMessageResponse = ReturnType<typeof Response>;

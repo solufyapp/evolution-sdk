@@ -7,7 +7,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const VideoMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
+const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Video URL or file in base64
    */
@@ -22,38 +22,40 @@ export const VideoMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   mimetype: z.optional(z.string()),
 });
 
-export const VideoMessageBodySchema = z.pipe(
-  VideoMessageOptionsSchema,
-  z.transform(({ video, ...data }) => ({
+export const Body = (options: VideoMessageOptions) => {
+  const { video, ...data } = OptionsSchema.parse(options);
+  return {
     ...data,
     media: video,
     mediatype: "video",
-  })),
-);
+  };
+};
 
-export const VideoMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      videoMessage: z.object({
-        url: z.url(),
-        mimetype: z.optional(z.string()),
-        fileSha256: z.base64(),
-        fileLength: z.coerce.number(),
-        mediaKey: z.base64(),
-        caption: z.optional(z.string()),
-        gifPlayback: z.boolean(),
-        fileEncSha256: z.base64(),
-        directPath: z.string(),
-        mediaKeyTimestamp: z.coerce.date(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    videoMessage: z.object({
+      url: z.url(),
+      mimetype: z.optional(z.string()),
+      fileSha256: z.base64(),
+      fileLength: z.coerce.number(),
+      mediaKey: z.base64(),
+      caption: z.optional(z.string()),
+      gifPlayback: z.boolean(),
+      fileEncSha256: z.base64(),
+      directPath: z.string(),
+      mediaKeyTimestamp: z.coerce.date(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -72,14 +74,8 @@ export const VideoMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type VideoMessageOptions = z.infer<typeof VideoMessageOptionsSchema>;
-export type VideoMessageResponse = z.infer<typeof VideoMessageResponseSchema>;
-
-export {
-  VideoMessageBodySchema as BodySchema,
-  VideoMessageOptionsSchema as OptionsSchema,
-  VideoMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type VideoMessageOptions = z.infer<typeof OptionsSchema>;
+export type VideoMessageResponse = ReturnType<typeof Response>;

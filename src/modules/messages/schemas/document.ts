@@ -7,7 +7,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const DocumentMessageOptionsSchema = z
+const OptionsSchema = z
   .extend(BaseMessageOptionsSchema, {
     /**
      * Document URL or file in base64
@@ -36,38 +36,40 @@ export const DocumentMessageOptionsSchema = z
     ),
   );
 
-export const DocumentMessageBodySchema = z.pipe(
-  DocumentMessageOptionsSchema,
-  z.transform(({ document, ...data }) => ({
+export const Body = (options: DocumentMessageOptions) => {
+  const { document, ...data } = OptionsSchema.parse(options);
+  return {
     ...data,
     media: document,
     mediatype: "document",
-  })),
-);
+  };
+};
 
-export const DocumentMessageResponseSchema = z.pipe(
-  z.object({
-    key: z.object({
-      remoteJid: z.string(),
-      id: z.string(),
-    }),
-    message: z.object({
-      documentMessage: z.object({
-        url: z.url(),
-        mimetype: z.optional(z.string()),
-        fileSha256: z.base64(),
-        fileLength: z.coerce.number(),
-        mediaKey: z.base64(),
-        caption: z.optional(z.string()),
-        fileName: z.string(),
-        fileEncSha256: z.base64(),
-        directPath: z.string(),
-        mediaKeyTimestamp: z.coerce.date(),
-      }),
-    }),
-    messageTimestamp: z.coerce.date(),
+const ResponseSchema = z.object({
+  key: z.object({
+    remoteJid: z.string(),
+    id: z.string(),
   }),
-  z.transform((data) => ({
+  message: z.object({
+    documentMessage: z.object({
+      url: z.url(),
+      mimetype: z.optional(z.string()),
+      fileSha256: z.base64(),
+      fileLength: z.coerce.number(),
+      mediaKey: z.base64(),
+      caption: z.optional(z.string()),
+      fileName: z.string(),
+      fileEncSha256: z.base64(),
+      directPath: z.string(),
+      mediaKeyTimestamp: z.coerce.date(),
+    }),
+  }),
+  messageTimestamp: z.coerce.date(),
+});
+
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -86,18 +88,8 @@ export const DocumentMessageResponseSchema = z.pipe(
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  })),
-);
-
-export type DocumentMessageOptions = z.infer<
-  typeof DocumentMessageOptionsSchema
->;
-export type DocumentMessageResponse = z.infer<
-  typeof DocumentMessageResponseSchema
->;
-
-export {
-  DocumentMessageBodySchema as BodySchema,
-  DocumentMessageOptionsSchema as OptionsSchema,
-  DocumentMessageResponseSchema as ResponseSchema,
+  };
 };
+
+export type DocumentMessageOptions = z.infer<typeof OptionsSchema>;
+export type DocumentMessageResponse = ReturnType<typeof Response>;

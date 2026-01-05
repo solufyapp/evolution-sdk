@@ -21,10 +21,10 @@ export class MessagesModule {
   async sendText(
     options: Text.TextMessageOptions,
   ): Promise<Text.TextMessageResponse> {
-    const body = Text.BodySchema.parse(options);
+    const body = Text.Body(options);
     const response = await this.api.post(Routes.Message.SendText, { body });
 
-    return Text.ResponseSchema.parse(response);
+    return Text.Response(response);
   }
 
   /**
@@ -34,10 +34,10 @@ export class MessagesModule {
   async sendImage(
     options: Image.ImageMessageOptions,
   ): Promise<Image.ImageMessageResponse> {
-    const body = Image.BodySchema.parse(options);
+    const body = Image.Body(options);
     const response = await this.api.post(Routes.Message.SendMedia, { body });
 
-    return Image.ResponseSchema.parse(response);
+    return Image.Response(response);
   }
 
   /**
@@ -47,10 +47,10 @@ export class MessagesModule {
   async sendVideo(
     options: Video.VideoMessageOptions,
   ): Promise<Video.VideoMessageResponse> {
-    const body = Video.BodySchema.parse(options);
+    const body = Video.Body(options);
     const response = await this.api.post(Routes.Message.SendMedia, { body });
 
-    return Video.ResponseSchema.parse(response);
+    return Video.Response(response);
   }
 
   /**
@@ -60,10 +60,10 @@ export class MessagesModule {
   async sendDocument(
     options: Document.DocumentMessageOptions,
   ): Promise<Document.DocumentMessageResponse> {
-    const body = Document.BodySchema.parse(options);
+    const body = Document.Body(options);
     const response = await this.api.post(Routes.Message.SendMedia, { body });
 
-    return Document.ResponseSchema.parse(response);
+    return Document.Response(response);
   }
 
   /**
@@ -73,10 +73,10 @@ export class MessagesModule {
   async sendAudio(
     options: Audio.AudioMessageOptions,
   ): Promise<Audio.AudioMessageResponse> {
-    const body = Audio.BodySchema.parse(options);
+    const body = Audio.Body(options);
     const response = await this.api.post(Routes.Message.SendMedia, { body });
 
-    return Audio.ResponseSchema.parse(response);
+    return Audio.Response(response);
   }
 
   /**
@@ -86,10 +86,10 @@ export class MessagesModule {
   async sendVoice(
     options: Voice.VoiceMessageOptions,
   ): Promise<Voice.VoiceMessageResponse> {
-    const body = Voice.BodySchema.parse(options);
+    const body = Voice.Body(options);
     const response = await this.api.post(Routes.Message.SendVoice, { body });
 
-    return Voice.ResponseSchema.parse(response);
+    return Voice.Response(response);
   }
 
   /**
@@ -99,10 +99,10 @@ export class MessagesModule {
   async sendSticker(
     options: Sticker.StickerMessageOptions,
   ): Promise<Sticker.StickerMessageResponse> {
-    const body = Sticker.BodySchema.parse(options);
+    const body = Sticker.Body(options);
     const response = await this.api.post(Routes.Message.SendSticker, { body });
 
-    return Sticker.ResponseSchema.parse(response);
+    return Sticker.Response(response);
   }
 
   /**
@@ -112,10 +112,10 @@ export class MessagesModule {
   async sendLocation(
     options: Location.LocationMessageOptions,
   ): Promise<Location.LocationMessageResponse> {
-    const body = Location.BodySchema.parse(options);
+    const body = Location.Body(options);
     const response = await this.api.post(Routes.Message.SendLocation, { body });
 
-    return Location.ResponseSchema.parse(response);
+    return Location.Response(response);
   }
 
   /**
@@ -125,9 +125,9 @@ export class MessagesModule {
   async sendContact(
     options: Contact.ContactMessageOptions,
   ): Promise<Contact.ContactMessageResponse> {
-    const body = Contact.BodySchema.parse(options);
+    const body = Contact.Body(options);
     const response = await this.api.post(Routes.Message.SendContact, { body });
 
-    return Contact.ResponseSchema.parse(response);
+    return Contact.Response(response);
   }
 }

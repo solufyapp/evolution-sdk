@@ -1,9 +1,8 @@
 {
   "name": "@solufy/evolution-sdk",
-  "private": false,
   "version": "0.2.4",
   "description": "Unofficial SDK for the Evolution Whatsapp API v2",
-  "packageManager": "pnpm@10.27.0",
+  "type": "module",
   "main": "./lib/src.cjs",
   "module": "./lib/src.mjs",
   "types": "./lib/src.d.mts",
@@ -22,11 +21,13 @@
   "files": [
     "lib"
   ],
+  "packageManager": "pnpm@10.27.0",
   "scripts": {
     "release": "pnpm build && changeset publish",
     "check-types": "tsc --noEmit",
     "build": "tsdown ./src",
-    "lint": "biome check --write ."
+    "lint": "biome check --write .",
+    "lint:ci": "biome check ."
   },
   "engines": {
     "node": ">=18.0.0"
@@ -61,11 +62,5 @@
     "url": "https://github.com/solufyapp/evolution-sdk/issues"
   },
   "homepage": "https://github.com/solufyapp/evolution-sdk#readme",
-  "license": "MIT",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "esbuild"
-    ]
-  }
+  "license": "MIT"
 }

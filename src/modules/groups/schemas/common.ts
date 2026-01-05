@@ -3,7 +3,7 @@ import * as z from "zod/mini";
 import { GroupJid, Jid } from "@/types/tags";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
-export const GroupResponseSchema = z.object({
+export const GroupSchema = z.object({
   id: z.string(),
   subject: z.string(),
   subjectOwner: z.string(),
@@ -16,19 +16,16 @@ export const GroupResponseSchema = z.object({
   announce: z.boolean(),
 });
 
-export const ParticipantResponseSchema = z.object({
+export const ParticipantSchema = z.object({
   id: z.string(),
   admin: z.nullish(z.enum(["admin", "superadmin"])),
 });
 
-export const GroupWithParticipantsResponseSchema = z.extend(
-  GroupResponseSchema,
-  { participants: z.array(ParticipantResponseSchema) },
-);
+export const GroupWithParticipantsSchema = z.extend(GroupSchema, {
+  participants: z.array(ParticipantSchema),
+});
 
-export const GroupResponseSchemaTransform = (
-  group: z.infer<typeof GroupResponseSchema>,
-) => ({
+export const GroupResponse = (group: GroupResponse) => ({
   jid: GroupJid(group.id),
   name: group.subject,
   pictureUrl: group.pictureUrl || undefined,
@@ -46,22 +43,20 @@ export const GroupResponseSchemaTransform = (
   announce: group.announce,
 });
 
-export const ParticipantResponseSchemaTransform = (
-  participant: z.infer<typeof ParticipantResponseSchema>,
-) => ({
+export const ParticipantResponse = (participant: ParticipantResponse) => ({
   id: participant.id,
-  role: participant.admin || ("member" as const),
+  role: participant.admin ?? ("member" as const),
 });
 
-export const GroupWithParticipantsResponseSchemaTransform = (
-  group: z.infer<typeof GroupWithParticipantsResponseSchema>,
+export const GroupWithParticipantsResponse = (
+  group: GroupWithParticipantsResponse,
 ) => ({
-  ...GroupResponseSchemaTransform(group),
-  participants: group.participants.map(ParticipantResponseSchemaTransform),
+  ...GroupResponse(group),
+  participants: group.participants.map(ParticipantResponse),
 });
 
-export type GroupResponse = z.infer<typeof GroupResponseSchema>;
-export type ParticipantResponse = z.infer<typeof ParticipantResponseSchema>;
+export type GroupResponse = z.infer<typeof GroupSchema>;
+export type ParticipantResponse = z.infer<typeof ParticipantSchema>;
 export type GroupWithParticipantsResponse = z.infer<
-  typeof GroupWithParticipantsResponseSchema
+  typeof GroupWithParticipantsSchema
 >;

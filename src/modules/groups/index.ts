@@ -31,9 +31,9 @@ export class GroupsModule {
     });
 
     if (getParticipants) {
-      return FindAll.ResponseWithParticipantsSchema.parse(response);
+      return FindAll.ResponseWithParticipants(response);
     }
-    return FindAll.ResponseSchema.parse(response);
+    return FindAll.Response(response);
   }
 
   /**
@@ -47,7 +47,7 @@ export class GroupsModule {
       params: { inviteCode: GroupInviteCodeSchema.parse(inviteCode) },
     });
 
-    return FindByInviteCode.ResponseSchema.parse(response);
+    return FindByInviteCode.Response(response);
   }
 
   /**
@@ -61,6 +61,6 @@ export class GroupsModule {
       params: { groupJid: GroupJidSchema.parse(groupJid) },
     });
 
-    return FindByJid.ResponseSchema.parse(response);
+    return FindByJid.Response(response);
   }
 }

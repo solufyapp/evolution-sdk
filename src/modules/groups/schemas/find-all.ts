@@ -1,30 +1,26 @@
 import * as z from "zod/mini";
 
 import {
-  GroupResponseSchema,
-  GroupResponseSchemaTransform,
-  GroupWithParticipantsResponseSchema,
-  GroupWithParticipantsResponseSchemaTransform,
+  GroupResponse,
+  GroupSchema,
+  GroupWithParticipantsResponse,
+  GroupWithParticipantsSchema,
 } from "./common";
 
-export const FindAllGroupsResponseSchema = z.pipe(
-  z.array(GroupResponseSchema),
-  z.transform((groups) => groups.map(GroupResponseSchemaTransform)),
-);
+const ResponseSchema = z.array(GroupSchema);
+const ResponseWithParticipantsSchema = z.array(GroupWithParticipantsSchema);
 
-export const FindAllGroupsWithParticipantsResponseSchema = z.pipe(
-  z.array(GroupWithParticipantsResponseSchema),
-  z.transform((groups) =>
-    groups.map(GroupWithParticipantsResponseSchemaTransform),
-  ),
-);
-
-export type FindAllGroupsResponse = z.infer<typeof FindAllGroupsResponseSchema>;
-export type FindAllGroupsWithParticipantsResponse = z.infer<
-  typeof FindAllGroupsWithParticipantsResponseSchema
->;
-
-export {
-  FindAllGroupsResponseSchema as ResponseSchema,
-  FindAllGroupsWithParticipantsResponseSchema as ResponseWithParticipantsSchema,
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return data.map(GroupResponse);
 };
+
+export const ResponseWithParticipants = (response: unknown) => {
+  const data = ResponseWithParticipantsSchema.parse(response);
+  return data.map(GroupWithParticipantsResponse);
+};
+
+export type FindAllGroupsResponse = ReturnType<typeof Response>;
+export type FindAllGroupsWithParticipantsResponse = ReturnType<
+  typeof ResponseWithParticipants
+>;

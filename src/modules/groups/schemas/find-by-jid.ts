@@ -1,17 +1,13 @@
-import * as z from "zod/mini";
-
 import {
-  GroupWithParticipantsResponseSchema,
-  GroupWithParticipantsResponseSchemaTransform,
+  GroupWithParticipantsResponse,
+  GroupWithParticipantsSchema,
 } from "./common";
 
-export const FindGroupByJidResponseSchema = z.pipe(
-  GroupWithParticipantsResponseSchema,
-  z.transform(GroupWithParticipantsResponseSchemaTransform),
-);
+export const ResponseSchema = GroupWithParticipantsSchema;
 
-export type FindGroupByJidResponse = z.infer<
-  typeof FindGroupByJidResponseSchema
->;
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return GroupWithParticipantsResponse(data);
+};
 
-export { FindGroupByJidResponseSchema as ResponseSchema };
+export type FindGroupByJidResponse = ReturnType<typeof Response>;

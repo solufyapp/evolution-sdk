@@ -1,34 +1,32 @@
 import * as z from "zod/mini";
 
 import {
-  GroupWithParticipantsResponseSchema,
-  GroupWithParticipantsResponseSchemaTransform,
+  GroupWithParticipantsResponse,
+  GroupWithParticipantsSchema,
 } from "./common";
 
-export const FindGroupByInviteCodeResponseSchema = z.pipe(
-  z.omit(
-    z.extend(GroupWithParticipantsResponseSchema, {
-      isCommunity: z.boolean(),
-      isCommunityAnnounce: z.boolean(),
-      joinApprovalMode: z.boolean(),
-      memberAddMode: z.boolean(),
-    }),
-    { pictureUrl: true },
-  ),
-  z.transform((group) => ({
-    ...GroupWithParticipantsResponseSchemaTransform({
-      ...group,
-      pictureUrl: null,
-    }),
-    isCommunity: group.isCommunity,
-    isCommunityAnnounce: group.isCommunityAnnounce,
-    joinApprovalMode: group.joinApprovalMode,
-    memberAddMode: group.memberAddMode,
-  })),
+const ResponseSchema = z.omit(
+  z.extend(GroupWithParticipantsSchema, {
+    isCommunity: z.boolean(),
+    isCommunityAnnounce: z.boolean(),
+    joinApprovalMode: z.boolean(),
+    memberAddMode: z.boolean(),
+  }),
+  { pictureUrl: true },
 );
 
-export type FindGroupByInviteCodeResponse = z.infer<
-  typeof FindGroupByInviteCodeResponseSchema
->;
+export const Response = (response: unknown) => {
+  const data = ResponseSchema.parse(response);
+  return {
+    ...GroupWithParticipantsResponse({
+      ...data,
+      pictureUrl: null,
+    }),
+    isCommunity: data.isCommunity,
+    isCommunityAnnounce: data.isCommunityAnnounce,
+    joinApprovalMode: data.joinApprovalMode,
+    memberAddMode: data.memberAddMode,
+  };
+};
 
-export { FindGroupByInviteCodeResponseSchema as ResponseSchema };
+export type FindGroupByInviteCodeResponse = ReturnType<typeof Response>;

@@ -1,11 +1,11 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { Jid, MessageId } from "@/types/tags";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const LocationMessageOptionsSchema = BaseMessageOptionsSchema.extend({
+export const LocationMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Location name
    */
@@ -26,8 +26,8 @@ export const LocationMessageOptionsSchema = BaseMessageOptionsSchema.extend({
 
 export const LocationMessageBodySchema = LocationMessageOptionsSchema;
 
-export const LocationMessageResponseSchema = z
-  .object({
+export const LocationMessageResponseSchema = z.pipe(
+  z.object({
     key: z.object({
       remoteJid: z.string(),
       id: z.string(),
@@ -41,8 +41,8 @@ export const LocationMessageResponseSchema = z
       }),
     }),
     messageTimestamp: z.coerce.date(),
-  })
-  .transform((data) => ({
+  }),
+  z.transform((data) => ({
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -55,7 +55,8 @@ export const LocationMessageResponseSchema = z
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  }));
+  })),
+);
 
 export type LocationMessageOptions = z.infer<
   typeof LocationMessageOptionsSchema

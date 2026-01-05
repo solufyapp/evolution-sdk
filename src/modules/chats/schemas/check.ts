@@ -1,30 +1,34 @@
 import { parsePhoneNumberWithError } from "libphonenumber-js";
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { PhoneNumberSchema } from "@/schemas/common";
 import { Jid } from "@/types/tags";
 
 export const CheckOptionsSchema = z.array(PhoneNumberSchema);
 
-export const CheckBodySchema = CheckOptionsSchema.transform((data) => ({
-  numbers: Array.isArray(data) ? data : [data],
-}));
+export const CheckBodySchema = z.pipe(
+  CheckOptionsSchema,
+  z.transform((data) => ({
+    numbers: Array.isArray(data) ? data : [data],
+  })),
+);
 
-export const CheckResponseSchema = z
-  .array(
+export const CheckResponseSchema = z.pipe(
+  z.array(
     z.object({
       exists: z.boolean(),
       jid: z.string(),
       number: z.string(),
     }),
-  )
-  .transform((numbers) =>
+  ),
+  z.transform((numbers) =>
     numbers.map((number) => ({
       exists: number.exists,
       jid: Jid(number.jid),
       number: parsePhoneNumberWithError(number.number).number,
     })),
-  );
+  ),
+);
 
 export type CheckOptions = z.infer<typeof CheckOptionsSchema>;
 export type CheckResponse = z.infer<typeof CheckResponseSchema>;

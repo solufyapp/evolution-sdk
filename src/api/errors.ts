@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 export class EvolutionApiError extends Error {
   constructor(message: string, cause?: unknown) {
@@ -26,25 +26,27 @@ const ErrorMessages = [
   ),
   ErrorMessage(
     z.object({
-      message: z.array(z.string().includes("Media upload failed on all hosts")),
+      message: z.array(
+        z.string().check(z.includes("Media upload failed on all hosts")),
+      ),
     }),
     "Media upload failed on all hosts",
   ),
   ErrorMessage(
     z.object({
-      message: z.array(z.string().includes("AxiosError")),
+      message: z.array(z.string().check(z.includes("AxiosError"))),
     }),
     (response) => response.message[0],
   ),
   ErrorMessage(
     z.object({
-      message: z.array(z.string().includes("No session")),
+      message: z.array(z.string().check(z.includes("No session"))),
     }),
     "No session found, try restarting your instance",
   ),
   ErrorMessage(
     z.object({
-      message: z.array(z.string().includes("AggregateError")),
+      message: z.array(z.string().check(z.includes("AggregateError"))),
     }),
     "AggregateError",
   ),
@@ -63,7 +65,7 @@ function getErrorMessage(response: unknown) {
     : undefined;
 }
 
-function ErrorMessage<T extends z.ZodType>(
+function ErrorMessage<T extends z.ZodMiniType>(
   schema: T,
   message: string | ((data: z.infer<T>) => string),
 ) {

@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import type { ApiService } from "@/api/service";
 import type { GroupInviteCode, GroupJid } from "@/types/tags";

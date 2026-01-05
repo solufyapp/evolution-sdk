@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { GroupJid, Jid } from "@/types/tags";
 import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
@@ -8,7 +8,7 @@ export const GroupResponseSchema = z.object({
   subject: z.string(),
   subjectOwner: z.string(),
   subjectTime: z.coerce.date(),
-  pictureUrl: z.url().nullish(),
+  pictureUrl: z.nullish(z.url()),
   size: z.number(),
   creation: z.coerce.date(),
   owner: z.string(),
@@ -18,12 +18,13 @@ export const GroupResponseSchema = z.object({
 
 export const ParticipantResponseSchema = z.object({
   id: z.string(),
-  admin: z.enum(["admin", "superadmin"]).nullish(),
+  admin: z.nullish(z.enum(["admin", "superadmin"])),
 });
 
-export const GroupWithParticipantsResponseSchema = GroupResponseSchema.extend({
-  participants: z.array(ParticipantResponseSchema),
-});
+export const GroupWithParticipantsResponseSchema = z.extend(
+  GroupResponseSchema,
+  { participants: z.array(ParticipantResponseSchema) },
+);
 
 export const GroupResponseSchemaTransform = (
   group: z.infer<typeof GroupResponseSchema>,

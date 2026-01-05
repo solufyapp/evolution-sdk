@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { ApiNumberSchema } from "@/schemas/common";
 
@@ -10,7 +10,7 @@ export const BaseMessageOptionsSchema = z.object({
   /**
    * Time in milliseconds before sending message
    */
-  delay: z.number().optional(),
+  delay: z.optional(z.number()),
 });
 
 export type BaseMessageOptions = z.infer<typeof BaseMessageOptionsSchema>;

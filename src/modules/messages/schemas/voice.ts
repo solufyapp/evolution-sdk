@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { mediaSchema } from "@/schemas/common";
 import { Jid, MessageId } from "@/types/tags";
@@ -6,7 +6,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const VoiceMessageOptionsSchema = BaseMessageOptionsSchema.extend({
+export const VoiceMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Audio URL or file in base64
    */
@@ -15,13 +15,13 @@ export const VoiceMessageOptionsSchema = BaseMessageOptionsSchema.extend({
    * Encode audio into WhatsApp default format (allows audio to be sped up)
    * @default true
    */
-  encoding: z.boolean().optional().default(true),
+  encoding: z._default(z.optional(z.boolean()), true),
 });
 
 export const VoiceMessageBodySchema = VoiceMessageOptionsSchema;
 
-export const VoiceMessageResponseSchema = z
-  .object({
+export const VoiceMessageResponseSchema = z.pipe(
+  z.object({
     key: z.object({
       remoteJid: z.string(),
       id: z.string(),
@@ -33,17 +33,17 @@ export const VoiceMessageResponseSchema = z
         fileSha256: z.base64(),
         fileLength: z.coerce.number(),
         seconds: z.number(),
-        ptt: z.boolean().optional(),
+        ptt: z.optional(z.boolean()),
         mediaKey: z.base64(),
         fileEncSha256: z.base64(),
         directPath: z.string(),
         mediaKeyTimestamp: z.coerce.date(),
-        waveform: z.base64().nullish(),
+        waveform: z.nullish(z.base64()),
       }),
     }),
     messageTimestamp: z.coerce.date(),
-  })
-  .transform((data) => ({
+  }),
+  z.transform((data) => ({
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -66,7 +66,8 @@ export const VoiceMessageResponseSchema = z
     },
     messageId: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  }));
+  })),
+);
 
 export type VoiceMessageOptions = z.infer<typeof VoiceMessageOptionsSchema>;
 export type VoiceMessageResponse = z.infer<typeof VoiceMessageResponseSchema>;

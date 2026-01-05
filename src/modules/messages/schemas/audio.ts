@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { mediaSchema } from "@/schemas/common";
 import { Jid, MessageId } from "@/types/tags";
@@ -6,7 +6,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const AudioMessageOptionsSchema = BaseMessageOptionsSchema.extend({
+export const AudioMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Audio URL or file in base64
    */
@@ -14,15 +14,20 @@ export const AudioMessageOptionsSchema = BaseMessageOptionsSchema.extend({
   /**
    * Audio mimetype
    */
-  mimetype: z.string().optional(),
+  mimetype: z.optional(z.string()),
 });
 
-export const AudioMessageBodySchema = AudioMessageOptionsSchema.transform(
-  ({ audio, ...data }) => ({ ...data, media: audio, mediatype: "audio" }),
+export const AudioMessageBodySchema = z.pipe(
+  AudioMessageOptionsSchema,
+  z.transform(({ audio, ...data }) => ({
+    ...data,
+    media: audio,
+    mediatype: "audio",
+  })),
 );
 
-export const AudioMessageResponseSchema = z
-  .object({
+export const AudioMessageResponseSchema = z.pipe(
+  z.object({
     key: z.object({
       remoteJid: z.string(),
       id: z.string(),
@@ -30,7 +35,7 @@ export const AudioMessageResponseSchema = z
     message: z.object({
       audioMessage: z.object({
         url: z.url(),
-        mimetype: z.string().optional(),
+        mimetype: z.optional(z.string()),
         fileSha256: z.base64(),
         fileLength: z.coerce.number(),
         seconds: z.number(),
@@ -41,8 +46,8 @@ export const AudioMessageResponseSchema = z
       }),
     }),
     messageTimestamp: z.coerce.date(),
-  })
-  .transform((data) => ({
+  }),
+  z.transform((data) => ({
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -60,7 +65,8 @@ export const AudioMessageResponseSchema = z
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  }));
+  })),
+);
 
 export type AudioMessageOptions = z.infer<typeof AudioMessageOptionsSchema>;
 export type AudioMessageResponse = z.infer<typeof AudioMessageResponseSchema>;

@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { ApiNumberSchema } from "@/schemas/common";
 
@@ -20,11 +20,15 @@ export const PresenceOptionsSchema = z.object({
   /**
    * Whether to wait until the presence is finished (duration)
    */
-  waitUntilFinish: z.boolean().optional(),
+  waitUntilFinish: z.optional(z.boolean()),
 });
 
-export const PresenceBodySchema = PresenceOptionsSchema.transform(
-  ({ waitUntilFinish, duration, ...data }) => ({ ...data, delay: duration }),
+export const PresenceBodySchema = z.pipe(
+  PresenceOptionsSchema,
+  z.transform(({ waitUntilFinish, duration, ...data }) => ({
+    ...data,
+    delay: duration,
+  })),
 );
 
 export type PresenceOptions = z.infer<typeof PresenceOptionsSchema>;

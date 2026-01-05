@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from "zod/mini";
 
 import { mediaSchema } from "@/schemas/common";
 import { Jid, MessageId } from "@/types/tags";
@@ -6,7 +6,7 @@ import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
 import { BaseMessageOptionsSchema } from "./base";
 
-export const StickerMessageOptionsSchema = BaseMessageOptionsSchema.extend({
+export const StickerMessageOptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Image URL or file in base64
    */
@@ -15,8 +15,8 @@ export const StickerMessageOptionsSchema = BaseMessageOptionsSchema.extend({
 
 export const StickerMessageBodySchema = StickerMessageOptionsSchema;
 
-export const StickerMessageResponseSchema = z
-  .object({
+export const StickerMessageResponseSchema = z.pipe(
+  z.object({
     key: z.object({
       remoteJid: z.string(),
       id: z.string(),
@@ -27,15 +27,15 @@ export const StickerMessageResponseSchema = z
         fileSha256: z.base64(),
         fileEncSha256: z.base64(),
         mediaKey: z.base64(),
-        mimetype: z.string().optional(),
+        mimetype: z.optional(z.string()),
         directPath: z.string(),
         fileLength: z.coerce.number(),
         mediaKeyTimestamp: z.coerce.date(),
       }),
     }),
     messageTimestamp: z.coerce.date(),
-  })
-  .transform((data) => ({
+  }),
+  z.transform((data) => ({
     receiver: {
       phoneNumber: phoneNumberFromJid(data.key.remoteJid),
       jid: Jid(data.key.remoteJid),
@@ -52,7 +52,8 @@ export const StickerMessageResponseSchema = z
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,
-  }));
+  })),
+);
 
 export type StickerMessageOptions = z.infer<typeof StickerMessageOptionsSchema>;
 export type StickerMessageResponse = z.infer<

@@ -3,28 +3,43 @@
   "private": false,
   "version": "0.2.3",
   "description": "Unofficial SDK for the Evolution Whatsapp API v2",
-  "packageManager": "pnpm@10.18.0",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "module": "lib/index.mjs",
+  "packageManager": "pnpm@10.27.0",
+  "main": "./lib/src.cjs",
+  "module": "./lib/src.mjs",
+  "types": "./lib/src.d.mts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./lib/src.d.mts",
+        "default": "./lib/src.mjs"
+      },
+      "require": {
+        "types": "./lib/src.d.cts",
+        "default": "./lib/src.cjs"
+      }
+    }
+  },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "release": "pnpm build && changeset publish",
     "check-types": "tsc --noEmit",
-    "build": "tsup ./src",
+    "build": "tsdown ./src",
     "lint": "biome check --write ."
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "libphonenumber-js": "^1.12.23",
-    "zod": "^4.1.11"
+    "libphonenumber-js": "^1.12.33",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.5",
-    "@changesets/cli": "^2.29.7",
-    "@types/node": "^24.6.2",
-    "tsup": "^8.5.0",
+    "@biomejs/biome": "^2.3.11",
+    "@changesets/cli": "^2.29.8",
+    "@types/node": "^25.0.3",
+    "tsdown": "^0.19.0-beta.2",
     "typescript": "^5.9.3"
   },
   "keywords": [

@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.4
+
+### Patch Changes
+
+- 03957dd: Migrate to Zod Mini to reduce bundle size and increase performance.
+
 ## 0.2.3
 
 ### Patch Changes

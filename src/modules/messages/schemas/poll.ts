@@ -1,10 +1,13 @@
 import * as z from "zod/mini";
 
-import { Jid, MessageId } from "@/types/tags";
+import { MessageId } from "@/types/tags";
 import { replaceWithGreeting } from "@/utils/greeting";
-import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
-import { BaseMessageOptionsSchema } from "./base";
+import {
+  BaseMessageOptionsSchema,
+  KeyResponseSchema,
+  ReceiverResponse,
+} from "./base";
 
 const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
@@ -36,10 +39,7 @@ export const Body = (options: PollMessageOptions) => {
 };
 
 const ResponseSchema = z.object({
-  key: z.object({
-    remoteJid: z.string(),
-    id: z.string(),
-  }),
+  key: KeyResponseSchema,
   message: z.object({
     pollCreationMessageV3: z.object({
       name: z.string(),
@@ -53,10 +53,7 @@ const ResponseSchema = z.object({
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
   return {
-    receiver: {
-      phoneNumber: phoneNumberFromJid(data.key.remoteJid),
-      jid: Jid(data.key.remoteJid),
-    },
+    receiver: ReceiverResponse(data.key.remoteJid),
     poll: {
       name: data.message.pollCreationMessageV3.name,
       options: data.message.pollCreationMessageV3.options.map(

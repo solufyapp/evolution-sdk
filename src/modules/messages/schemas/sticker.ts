@@ -1,10 +1,13 @@
 import * as z from "zod/mini";
 
 import { mediaSchema } from "@/schemas/common";
-import { Jid, MessageId } from "@/types/tags";
-import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
+import { MessageId } from "@/types/tags";
 
-import { BaseMessageOptionsSchema } from "./base";
+import {
+  BaseMessageOptionsSchema,
+  KeyResponseSchema,
+  ReceiverResponse,
+} from "./base";
 
 const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
@@ -18,10 +21,7 @@ export const Body = (options: StickerMessageOptions) => {
 };
 
 const ResponseSchema = z.object({
-  key: z.object({
-    remoteJid: z.string(),
-    id: z.string(),
-  }),
+  key: KeyResponseSchema,
   message: z.object({
     stickerMessage: z.object({
       url: z.url(),
@@ -40,10 +40,7 @@ const ResponseSchema = z.object({
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
   return {
-    receiver: {
-      phoneNumber: phoneNumberFromJid(data.key.remoteJid),
-      jid: Jid(data.key.remoteJid),
-    },
+    receiver: ReceiverResponse(data.key.remoteJid),
     media: {
       url: data.message.stickerMessage.url,
       mimetype: data.message.stickerMessage.mimetype,

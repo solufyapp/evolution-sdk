@@ -2,10 +2,13 @@ import { parsePhoneNumberWithError } from "libphonenumber-js/min";
 import * as z from "zod/mini";
 
 import { PhoneNumberSchema } from "@/schemas/common";
-import { Jid, MessageId } from "@/types/tags";
-import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
+import { MessageId } from "@/types/tags";
 
-import { BaseMessageOptionsSchema } from "./base";
+import {
+  BaseMessageOptionsSchema,
+  KeyResponseSchema,
+  ReceiverResponse,
+} from "./base";
 
 const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
@@ -52,10 +55,7 @@ export const Body = (options: ContactMessageOptions) => {
 };
 
 const ResponseSchema = z.object({
-  key: z.object({
-    remoteJid: z.string(),
-    id: z.string(),
-  }),
+  key: KeyResponseSchema,
   message: z.union([
     z.object({
       contactMessage: z.object({
@@ -80,10 +80,7 @@ const ResponseSchema = z.object({
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
   return {
-    receiver: {
-      phoneNumber: phoneNumberFromJid(data.key.remoteJid),
-      jid: Jid(data.key.remoteJid),
-    },
+    receiver: ReceiverResponse(data.key.remoteJid),
     contacts:
       "contactMessage" in data.message
         ? [data.message.contactMessage]

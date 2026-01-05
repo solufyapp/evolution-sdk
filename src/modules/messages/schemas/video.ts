@@ -1,11 +1,14 @@
 import * as z from "zod/mini";
 
 import { mediaSchema } from "@/schemas/common";
-import { Jid, MessageId } from "@/types/tags";
+import { MessageId } from "@/types/tags";
 import { replaceWithGreeting } from "@/utils/greeting";
-import { phoneNumberFromJid } from "@/utils/phone-numer-from-jid";
 
-import { BaseMessageOptionsSchema } from "./base";
+import {
+  BaseMessageOptionsSchema,
+  KeyResponseSchema,
+  ReceiverResponse,
+} from "./base";
 
 const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
@@ -32,10 +35,7 @@ export const Body = (options: VideoMessageOptions) => {
 };
 
 const ResponseSchema = z.object({
-  key: z.object({
-    remoteJid: z.string(),
-    id: z.string(),
-  }),
+  key: KeyResponseSchema,
   message: z.object({
     videoMessage: z.object({
       url: z.url(),
@@ -56,10 +56,7 @@ const ResponseSchema = z.object({
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
   return {
-    receiver: {
-      phoneNumber: phoneNumberFromJid(data.key.remoteJid),
-      jid: Jid(data.key.remoteJid),
-    },
+    receiver: ReceiverResponse(data.key.remoteJid),
     media: {
       url: data.message.videoMessage.url,
       caption: data.message.videoMessage.caption,

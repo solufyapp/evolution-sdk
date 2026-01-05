@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.5
+
+### Patch Changes
+
+- a8ad971: Use libphonenumber-js/min to reduce bundle size.
+
 ## 0.2.4
 
 ### Patch Changes

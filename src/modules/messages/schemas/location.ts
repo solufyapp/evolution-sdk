@@ -46,13 +46,14 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { locationMessage } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     location: {
-      latitude: data.message.locationMessage.degreesLatitude,
-      longitude: data.message.locationMessage.degreesLongitude,
-      name: data.message.locationMessage.name,
-      address: data.message.locationMessage.address,
+      latitude: locationMessage.degreesLatitude,
+      longitude: locationMessage.degreesLongitude,
+      name: locationMessage.name,
+      address: locationMessage.address,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

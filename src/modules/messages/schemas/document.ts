@@ -69,19 +69,20 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { documentMessage } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     media: {
-      url: data.message.documentMessage.url,
-      caption: data.message.documentMessage.caption,
-      mimetype: data.message.documentMessage.mimetype,
-      length: data.message.documentMessage.fileLength,
-      sha256: data.message.documentMessage.fileSha256,
-      fileName: data.message.documentMessage.fileName,
-      encryptedSha256: data.message.documentMessage.fileEncSha256,
-      directPath: data.message.documentMessage.directPath,
-      key: data.message.documentMessage.mediaKey,
-      keyTimestamp: data.message.documentMessage.mediaKeyTimestamp,
+      url: documentMessage.url,
+      caption: documentMessage.caption,
+      mimetype: documentMessage.mimetype,
+      length: documentMessage.fileLength,
+      sha256: documentMessage.fileSha256,
+      fileName: documentMessage.fileName,
+      encryptedSha256: documentMessage.fileEncSha256,
+      directPath: documentMessage.directPath,
+      key: documentMessage.mediaKey,
+      keyTimestamp: documentMessage.mediaKeyTimestamp,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

@@ -55,19 +55,20 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { videoMessage } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     media: {
-      url: data.message.videoMessage.url,
-      caption: data.message.videoMessage.caption,
-      mimetype: data.message.videoMessage.mimetype,
-      gifPlayback: data.message.videoMessage.gifPlayback,
-      length: data.message.videoMessage.fileLength,
-      sha256: data.message.videoMessage.fileSha256,
-      encryptedSha256: data.message.videoMessage.fileEncSha256,
-      directPath: data.message.videoMessage.directPath,
-      key: data.message.videoMessage.mediaKey,
-      keyTimestamp: data.message.videoMessage.mediaKeyTimestamp,
+      url: videoMessage.url,
+      caption: videoMessage.caption,
+      mimetype: videoMessage.mimetype,
+      gifPlayback: videoMessage.gifPlayback,
+      length: videoMessage.fileLength,
+      sha256: videoMessage.fileSha256,
+      encryptedSha256: videoMessage.fileEncSha256,
+      directPath: videoMessage.directPath,
+      key: videoMessage.mediaKey,
+      keyTimestamp: videoMessage.mediaKeyTimestamp,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

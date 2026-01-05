@@ -39,17 +39,18 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { stickerMessage } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     media: {
-      url: data.message.stickerMessage.url,
-      mimetype: data.message.stickerMessage.mimetype,
-      length: data.message.stickerMessage.fileLength,
-      sha256: data.message.stickerMessage.fileSha256,
-      encryptedSha256: data.message.stickerMessage.fileEncSha256,
-      directPath: data.message.stickerMessage.directPath,
-      key: data.message.stickerMessage.mediaKey,
-      keyTimestamp: data.message.stickerMessage.mediaKeyTimestamp,
+      url: stickerMessage.url,
+      mimetype: stickerMessage.mimetype,
+      length: stickerMessage.fileLength,
+      sha256: stickerMessage.fileSha256,
+      encryptedSha256: stickerMessage.fileEncSha256,
+      directPath: stickerMessage.directPath,
+      key: stickerMessage.mediaKey,
+      keyTimestamp: stickerMessage.mediaKeyTimestamp,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

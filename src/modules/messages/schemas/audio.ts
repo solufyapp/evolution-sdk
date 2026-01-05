@@ -49,18 +49,19 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { audioMessage } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     media: {
-      url: data.message.audioMessage.url,
-      mimetype: data.message.audioMessage.mimetype,
-      length: data.message.audioMessage.fileLength,
-      durationInSeconds: data.message.audioMessage.seconds,
-      sha256: data.message.audioMessage.fileSha256,
-      encryptedSha256: data.message.audioMessage.fileEncSha256,
-      directPath: data.message.audioMessage.directPath,
-      key: data.message.audioMessage.mediaKey,
-      keyTimestamp: data.message.audioMessage.mediaKeyTimestamp,
+      url: audioMessage.url,
+      mimetype: audioMessage.mimetype,
+      length: audioMessage.fileLength,
+      durationInSeconds: audioMessage.seconds,
+      sha256: audioMessage.fileSha256,
+      encryptedSha256: audioMessage.fileEncSha256,
+      directPath: audioMessage.directPath,
+      key: audioMessage.mediaKey,
+      keyTimestamp: audioMessage.mediaKeyTimestamp,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

@@ -52,14 +52,13 @@ const ResponseSchema = z.object({
 
 export const Response = (response: unknown) => {
   const data = ResponseSchema.parse(response);
+  const { pollCreationMessageV3 } = data.message;
   return {
     receiver: ReceiverResponse(data.key.remoteJid),
     poll: {
-      name: data.message.pollCreationMessageV3.name,
-      options: data.message.pollCreationMessageV3.options.map(
-        (option) => option.optionName,
-      ),
-      multiple: data.message.pollCreationMessageV3.selectableOptionsCount > 1,
+      name: pollCreationMessageV3.name,
+      options: pollCreationMessageV3.options.map((option) => option.optionName),
+      multiple: pollCreationMessageV3.selectableOptionsCount > 1,
     },
     id: MessageId(data.key.id),
     timestamp: data.messageTimestamp,

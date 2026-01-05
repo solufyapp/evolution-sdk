@@ -1,6 +1,6 @@
 {
   "name": "@solufy/evolution-sdk",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Unofficial SDK for the Evolution Whatsapp API v2",
   "type": "module",
   "main": "./lib/src.cjs",

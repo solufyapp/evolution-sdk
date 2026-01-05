@@ -1,7 +1,7 @@
 import {
   isValidPhoneNumber,
   parsePhoneNumberFromString,
-} from "libphonenumber-js";
+} from "libphonenumber-js/min";
 import * as z from "zod/mini";
 
 import type { GroupInviteCode, GroupJid, Jid } from "@/types/tags";

@@ -1,4 +1,4 @@
-import { parsePhoneNumberWithError } from "libphonenumber-js";
+import { parsePhoneNumberWithError } from "libphonenumber-js/min";
 
 /**
  * Get phone number from JID

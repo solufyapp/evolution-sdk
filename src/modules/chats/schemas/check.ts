@@ -1,4 +1,4 @@
-import { parsePhoneNumberWithError } from "libphonenumber-js";
+import { parsePhoneNumberWithError } from "libphonenumber-js/min";
 import * as z from "zod/mini";
 
 import { PhoneNumberSchema } from "@/schemas/common";

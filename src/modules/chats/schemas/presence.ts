@@ -2,7 +2,7 @@ import * as z from "zod/mini";
 
 import { ApiNumberSchema } from "@/schemas/common";
 
-export const PresenceOptionsSchema = z.object({
+const OptionsSchema = z.object({
   /**
    * Chat number or JID to receve the presence
    */
@@ -23,17 +23,9 @@ export const PresenceOptionsSchema = z.object({
   waitUntilFinish: z.optional(z.boolean()),
 });
 
-export const PresenceBodySchema = z.pipe(
-  PresenceOptionsSchema,
-  z.transform(({ waitUntilFinish, duration, ...data }) => ({
-    ...data,
-    delay: duration,
-  })),
-);
-
-export type PresenceOptions = z.infer<typeof PresenceOptionsSchema>;
-
-export {
-  PresenceBodySchema as BodySchema,
-  PresenceOptionsSchema as OptionsSchema,
+export const Body = (options: PresenceOptions) => {
+  const { waitUntilFinish, duration, ...data } = OptionsSchema.parse(options);
+  return { ...data, delay: duration };
 };
+
+export type PresenceOptions = z.infer<typeof OptionsSchema>;

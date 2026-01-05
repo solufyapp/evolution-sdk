@@ -15,10 +15,10 @@ export class ChatsModule {
   async check(
     ...numbers: Check.CheckOptions | Check.CheckOptions[]
   ): Promise<Check.CheckResponse> {
-    const body = Check.CheckBodySchema.parse(numbers.flat());
+    const body = Check.Body(numbers.flat());
     const response = await this.api.post(Routes.Chats.Check, { body });
 
-    return Check.CheckResponseSchema.parse(response);
+    return Check.Response(response);
   }
 
   /**
@@ -27,7 +27,7 @@ export class ChatsModule {
   async findAll(): Promise<FindAll.FindAllChatsResponse> {
     const response = await this.api.post(Routes.Chats.FindAll);
 
-    return FindAll.ResponseSchema.parse(response);
+    return FindAll.Response(response);
   }
 
   /**
@@ -35,7 +35,7 @@ export class ChatsModule {
    * @param options - Presence options
    */
   async sendPresence(options: Presence.PresenceOptions) {
-    const body = Presence.BodySchema.parse(options);
+    const body = Presence.Body(options);
 
     if (options.waitUntilFinish) {
       await this.api.post(Routes.Chats.SendPresence, { body });

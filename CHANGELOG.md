@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 0.2.6
+
+### Patch Changes
+
+- cd3ec0e: Fix video caption being required.
+
 ## 0.2.5
 
 ### Patch Changes

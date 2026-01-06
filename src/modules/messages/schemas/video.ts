@@ -18,7 +18,7 @@ const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Caption to send with video
    */
-  caption: z.string().check(z.overwrite(replaceWithGreeting)),
+  caption: z.optional(z.string()).check(z.overwrite(replaceWithGreeting)),
   /**
    * Video mimetype
    */

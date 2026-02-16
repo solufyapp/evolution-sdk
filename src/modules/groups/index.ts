@@ -1,6 +1,6 @@
 import * as z from "zod/mini";
 
-import type { ApiService } from "@/api/service";
+import type { InstanceApi } from "@/api/instance";
 import type { GroupInviteCode, GroupJid } from "@/types/tags";
 import { Routes } from "@/api/routes";
 import { GroupInviteCodeSchema, GroupJidSchema } from "@/schemas/common";
@@ -10,7 +10,7 @@ import * as FindByInviteCode from "./schemas/find-by-invite-code";
 import * as FindByJid from "./schemas/find-by-jid";
 
 export class GroupsModule {
-  constructor(private readonly api: ApiService) {}
+  constructor(private readonly api: InstanceApi) {}
 
   /**
    * Gets all groups

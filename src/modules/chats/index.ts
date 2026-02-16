@@ -1,4 +1,4 @@
-import type { ApiService } from "@/api/service";
+import type { InstanceApi } from "@/api/instance";
 import { Routes } from "@/api/routes";
 
 import * as Check from "./schemas/check";
@@ -6,7 +6,7 @@ import * as FindAll from "./schemas/find-all";
 import * as Presence from "./schemas/presence";
 
 export class ChatsModule {
-  constructor(private readonly api: ApiService) {}
+  constructor(private readonly api: InstanceApi) {}
 
   /**
    * Checks if a number has WhatsApp

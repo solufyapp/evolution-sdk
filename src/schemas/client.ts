@@ -9,10 +9,6 @@ export const ClientOptionsSchema = z.object({
    * Your instance token or global API key
    */
   token: z.string(),
-  /**
-   * Your instance name
-   */
-  instance: z.string(),
 });
 
 export type ClientOptions = z.infer<typeof ClientOptionsSchema>;

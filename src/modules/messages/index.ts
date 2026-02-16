@@ -1,4 +1,4 @@
-import type { ApiService } from "@/api/service";
+import type { InstanceApi } from "@/api/instance";
 import { Routes } from "@/api/routes";
 
 import * as Audio from "./schemas/audio";
@@ -12,7 +12,7 @@ import * as Video from "./schemas/video";
 import * as Voice from "./schemas/voice";
 
 export class MessagesModule {
-  constructor(private readonly api: ApiService) {}
+  constructor(private readonly api: InstanceApi) {}
 
   /**
    * Sends a text message

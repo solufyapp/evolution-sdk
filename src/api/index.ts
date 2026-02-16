@@ -3,8 +3,8 @@ import type { APIRequestInit } from "@/types/api";
 
 import { EvolutionApiError } from "./errors";
 
-export class ApiService {
-  constructor(private readonly options: ClientOptions) {}
+export class EvolutionApi {
+  constructor(protected readonly options: ClientOptions) {}
 
   async get<T>(path: string, options: Omit<APIRequestInit, "method"> = {}) {
     return this.request<T>(path, { ...options, method: "GET" });
@@ -31,25 +31,19 @@ export class ApiService {
     options: APIRequestInit = {},
   ): Promise<T> {
     const { init, params } = this.makeInit(options);
-    const url = new URL(
-      `/${path}/${this.options.instance}/?${params}`,
-      this.options.serverUrl,
-    );
+    const url = new URL(`/${path}/?${params}`, this.options.serverUrl);
 
     const response = await fetch(url, init);
     const data = await response.json();
 
     if (!response.ok || "error" in data) {
-      throw new EvolutionApiError(
-        `${this.options.instance} ${data.error || "Unknown Error"}`,
-        data.response,
-      );
+      throw new EvolutionApiError(data.error || "Unknown Error", data.response);
     }
 
     return data;
   }
 
-  private makeInit(options: APIRequestInit) {
+  protected makeInit(options: APIRequestInit) {
     const { params: _, headers, body, ...rest } = options;
 
     const paramsInit =

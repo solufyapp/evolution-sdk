@@ -27,8 +27,9 @@ export class InstanceApi extends EvolutionApi {
 
     if (!response.ok || "error" in data) {
       throw new EvolutionApiError(
-        `[${this.instance}] ${data.error || "Unknown Error"}`,
+        data.error || "Unknown Error",
         data.response,
+        this.instance,
       );
     }
 

@@ -1,73 +1,78 @@
 import * as z from "zod/mini";
 
 export class EvolutionApiError extends Error {
-  constructor(message: string, cause?: unknown) {
-    const error = getErrorMessage(cause);
+  public code?: string;
+  public instance?: string;
+
+  constructor(message: string, cause?: unknown, instance?: string) {
+    const error = getError(cause);
 
     super(message, error ? undefined : { cause });
 
     this.name = EvolutionApiError.name;
-    this.message = error ?? message;
+    this.message = error?.message ?? message;
+    this.code = error?.code;
+    this.instance = instance;
   }
 }
 
-const ErrorMessages = [
-  ErrorMessage(
-    z.object({
-      message: z.array(
-        z.object({
-          exists: z.literal(false),
-          jid: z.string(),
-          number: z.string(),
-        }),
-      ),
-    }),
+const Errors = [
+  defineError(
+    z.array(
+      z.object({
+        exists: z.literal(false),
+        jid: z.string(),
+        number: z.string(),
+      }),
+    ),
+    "invalid_whatsapp_number",
     "Provided number is not a valid WhatsApp number",
   ),
-  ErrorMessage(
-    z.object({
-      message: z.array(
-        z.string().check(z.includes("Media upload failed on all hosts")),
-      ),
-    }),
+  defineError(
+    z.array(z.string().check(z.includes("Media upload failed on all hosts"))),
+    "media_upload_failed",
     "Media upload failed on all hosts",
   ),
-  ErrorMessage(
-    z.object({
-      message: z.array(z.string().check(z.includes("AxiosError"))),
-    }),
-    (response) => response.message[0],
+  defineError(
+    z.array(z.string().check(z.includes("AxiosError"))),
+    "generic",
+    (r) => r.message[0],
   ),
-  ErrorMessage(
-    z.object({
-      message: z.array(z.string().check(z.includes("No session"))),
-    }),
+  defineError(
+    z.array(z.string().check(z.includes("No session"))),
+    "no_session_found",
     "No session found, try restarting your instance",
   ),
-  ErrorMessage(
-    z.object({
-      message: z.array(z.string().check(z.includes("AggregateError"))),
-    }),
+  defineError(
+    z.array(z.string().check(z.includes("AggregateError"))),
+    "aggregate_error",
     "AggregateError",
   ),
 ];
 
-function getErrorMessage(response: unknown) {
-  const error = ErrorMessages.find(
+// biome-ignore lint/suspicious/noExplicitAny: Response is any
+function getError(response: any) {
+  const error = Errors.find(
     (message) => message.schema.safeParse(response).success,
   );
 
   return error
-    ? typeof error.message === "string"
-      ? error.message
-      : // biome-ignore lint/suspicious/noExplicitAny: Generic
-        error.message(response as any)
+    ? {
+        code: error.code,
+        message:
+          typeof error.message === "string"
+            ? error.message
+            : error.message(response),
+      }
     : undefined;
 }
 
-function ErrorMessage<T extends z.ZodMiniType>(
+function defineError<T extends z.ZodMiniType>(
   schema: T,
-  message: string | ((data: z.infer<T>) => string),
+  code: string,
+  message:
+    | string
+    | ((data: z.infer<z.ZodMiniObject<{ message: T }>>) => string),
 ) {
-  return { schema, message };
+  return { schema: z.object({ message: schema }), code, message };
 }

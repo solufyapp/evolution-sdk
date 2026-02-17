@@ -1,6 +1,6 @@
 import * as z from "zod/mini";
 
-import { mediaSchema } from "@/schemas/common";
+import { MediaSchema } from "@/schemas/common";
 import { MessageId } from "@/types/tags";
 import { replaceWithGreeting } from "@/utils/greeting";
 
@@ -14,7 +14,7 @@ const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Image URL or file in base64
    */
-  image: mediaSchema,
+  image: MediaSchema,
   /**
    * Caption to send with image
    */

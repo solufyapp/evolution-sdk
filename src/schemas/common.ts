@@ -48,4 +48,4 @@ export const ApiNumberSchema = z.union([
   GroupJidSchema,
 ]);
 
-export const mediaSchema = z.union([z.url(), z.base64()]);
+export const MediaSchema = z.union([z.url(), z.base64()]);

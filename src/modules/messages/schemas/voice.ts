@@ -1,6 +1,6 @@
 import * as z from "zod/mini";
 
-import { mediaSchema } from "@/schemas/common";
+import { MediaSchema } from "@/schemas/common";
 import { MessageId } from "@/types/tags";
 
 import {
@@ -13,7 +13,7 @@ const OptionsSchema = z.extend(BaseMessageOptionsSchema, {
   /**
    * Audio URL or file in base64
    */
-  audio: mediaSchema,
+  audio: MediaSchema,
   /**
    * Encode audio into WhatsApp default format (allows audio to be sped up)
    * @default true

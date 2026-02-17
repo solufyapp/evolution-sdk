@@ -20,6 +20,7 @@ export class EvolutionApiError extends Error {
 }
 
 const Errors = [
+  defineError(z.literal("Unauthorized"), "unauthorized", "Unauthorized"),
   defineError(
     z.array(
       z.object({
@@ -50,6 +51,11 @@ const Errors = [
     z.array(z.string().check(z.includes("AggregateError"))),
     "aggregate_error",
     "AggregateError",
+  ),
+  defineError(
+    z.array(z.string().check(z.includes("instance does not exist"))),
+    "instance_not_found",
+    "Instance not found",
   ),
 ];
 

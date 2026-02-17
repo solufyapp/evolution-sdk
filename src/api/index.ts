@@ -37,7 +37,9 @@ export class EvolutionApi {
     const data = await response.json();
 
     if (!response.ok || "error" in data) {
-      throw new EvolutionApiError(data.error ?? "Unknown Error", data.response);
+      throw new EvolutionApiError(data.error ?? "Unknown Error", {
+        cause: data.response,
+      });
     }
 
     return data;

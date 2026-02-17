@@ -4,15 +4,18 @@ export class EvolutionApiError extends Error {
   public code?: string;
   public instance?: string;
 
-  constructor(message: string, cause?: unknown, instance?: string) {
-    const error = getError(cause);
+  constructor(
+    message: string,
+    options?: { cause?: unknown; instance?: string; code?: string },
+  ) {
+    const error = getError(options?.cause);
 
-    super(message, error ? undefined : { cause });
+    super(message, error ? undefined : { cause: options?.cause });
 
     this.name = EvolutionApiError.name;
     this.message = error?.message ?? message;
-    this.code = error?.code;
-    this.instance = instance;
+    this.code = error?.code ?? options?.code;
+    this.instance = options?.instance;
   }
 }
 

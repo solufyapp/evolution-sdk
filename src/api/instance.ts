@@ -26,11 +26,10 @@ export class InstanceApi extends EvolutionApi {
     const data = await response.json();
 
     if (!response.ok || "error" in data) {
-      throw new EvolutionApiError(
-        data.error || "Unknown Error",
-        data.response,
-        this.instance,
-      );
+      throw new EvolutionApiError(data.error || "Unknown Error", {
+        cause: data.response,
+        instance: this.instance,
+      });
     }
 
     return data;

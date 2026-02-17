@@ -14,23 +14,23 @@ export class GroupsModule {
 
   /**
    * Gets all groups
-   * @param getParticipants - Whether to get participants
+   * @param participants - Whether to fetch participants or not
    */
-  async findAll(getParticipants: false): Promise<FindAll.FindAllGroupsResponse>;
+  async findAll(participants: false): Promise<FindAll.FindAllGroupsResponse>;
   async findAll(
-    getParticipants: true,
+    participants: true,
   ): Promise<FindAll.FindAllGroupsWithParticipantsResponse>;
   async findAll(
-    getParticipants = false,
+    participants = false,
   ): Promise<
     | FindAll.FindAllGroupsResponse
     | FindAll.FindAllGroupsWithParticipantsResponse
   > {
     const response = await this.api.get(Routes.Groups.FindAll, {
-      params: { getParticipants: z.boolean().parse(getParticipants) },
+      params: { getParticipants: z.boolean().parse(participants) },
     });
 
-    if (getParticipants) {
+    if (participants) {
       return FindAll.ResponseWithParticipants(response);
     }
     return FindAll.Response(response);

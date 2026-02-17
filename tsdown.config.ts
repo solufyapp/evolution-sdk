@@ -6,4 +6,5 @@ export default {
   minify: false,
   sourcemap: false,
   nodeProtocol: "strip",
+  inlineOnly: false,
 } satisfies UserConfig;

@@ -1,5 +1,16 @@
 # @solufy/evolution-sdk
 
+## 1.0.0
+
+### Major Changes
+
+- 899b7c3: BREAKING: New `EvolutionInstance` for instance requests and changed `EvolutionClient` to non-instance requests.
+
+### Minor Changes
+
+- 8c0d544: Improved error structure to include an unique code and instance property.
+- ad22018: New instances module for finding and managing instances
+
 ## 0.2.6
 
 ### Patch Changes

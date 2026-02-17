@@ -18,4 +18,14 @@ export const Routes = {
     FindByJid: "group/findGroupInfos",
     FindByInviteCode: "group/inviteInfo",
   },
+  Instances: {
+    Create: "instance/create",
+    Find: "instance/fetchInstances",
+    Connect: (instance: string) => `instance/connect/${instance}`,
+    Restart: (instance: string) => `instance/restart/${instance}`,
+    Presence: (instance: string) => `instance/setPresence/${instance}`,
+    Status: (instance: string) => `instance/connectionState/${instance}`,
+    Logout: (instance: string) => `instance/logout/${instance}`,
+    Delete: (instance: string) => `instance/delete/${instance}`,
+  },
 };

@@ -1,4 +1,5 @@
 import { EvolutionApi } from "./api";
+import { InstancesModule } from "./modules/instances";
 import { type ClientOptions, ClientOptionsSchema } from "./schemas/client";
 
 export class EvolutionClient {
@@ -6,6 +7,10 @@ export class EvolutionClient {
    * API service for directly interacting with the Evolution API (no specific typings)
    */
   public readonly api: EvolutionApi;
+  /**
+   * Find and manage instances
+   */
+  public readonly instances: InstancesModule;
 
   /**
    * Evolution Client - API client for interacting with the Evolution API
@@ -15,11 +20,13 @@ export class EvolutionClient {
     ClientOptionsSchema.parse(options);
 
     this.api = new EvolutionApi(options);
+    this.instances = new InstancesModule(this.api);
   }
 }
 
 export type * from "./modules/chats/schemas";
 export type * from "./modules/groups/schemas";
+export type * from "./modules/instances/schemas";
 export type * from "./modules/messages/schemas";
 export { EvolutionApiError } from "./api/errors";
 export { EvolutionInstance } from "./instance";

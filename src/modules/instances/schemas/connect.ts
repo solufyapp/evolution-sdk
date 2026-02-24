@@ -2,15 +2,16 @@ import * as z from "zod/mini";
 
 const ResponseSchema = z.object({
   pairingCode: z.nullable(z.string()),
-  code: z.string(),
-  base64: z.z.string(),
+  code: z.nullable(z.string()),
+  base64: z.nullable(z.string()),
 });
 
 export const Response = (response: unknown) => {
-  const { pairingCode, ...data } = ResponseSchema.parse(response);
+  const { pairingCode, code, base64 } = ResponseSchema.parse(response);
   return {
-    ...data,
     pairingCode: pairingCode ?? undefined,
+    code: code ?? undefined,
+    base64: base64 ?? undefined,
   };
 };
 

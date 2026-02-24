@@ -1,9 +1,9 @@
 import * as z from "zod/mini";
 
 const ResponseSchema = z.object({
-  pairingCode: z.nullable(z.string()),
-  code: z.nullable(z.string()),
-  base64: z.nullable(z.string()),
+  pairingCode: z.nullish(z.string()),
+  code: z.nullish(z.string()),
+  base64: z.nullish(z.string()),
 });
 
 export const Response = (response: unknown) => {

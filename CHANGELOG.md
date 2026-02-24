@@ -1,5 +1,11 @@
 # @solufy/evolution-sdk
 
+## 1.0.1
+
+### Patch Changes
+
+- b7cbbf4: Fix instance connection response schema
+
 ## 1.0.0
 
 ### Major Changes
